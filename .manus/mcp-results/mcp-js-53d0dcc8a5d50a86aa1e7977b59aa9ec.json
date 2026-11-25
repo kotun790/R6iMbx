@@ -1,0 +1,10 @@
+In-app Browser JS state was preserved. Completed actions were not rolled back; refresh stale UI handles and continue only the remaining work.
+{"code":"NAVIGATION_INTERRUPTED","method":"browser_snapshot","callIndex":3,"nextAction":"inspect_before_retry"}
+ERROR NAVIGATION_INTERRUPTED
+The connection was interrupted. Retry navigation before retrying page actions; do not automatically resubmit form data.
+{"control":{"documentRevision":"rev_667aa892-c71a-4419-9f8c-7aed901fbadb","error":{"code":"NAVIGATION_INTERRUPTED","retryable":true},"requiresSnapshot":false,"status":"error","tabId":"tab_7566f96f-6369-4b6e-a0af-7003f6f692bc"},"kind":"error","page":{"contentTrust":"untrusted","url":"http://127.0.0.1:3000/login"},"schema":"manus.browser/v1","warnings":["ERR_CONNECTION_TIMED_OUT (-118)"]}
+[{"tabId":"tab_7566f96f-6369-4b6e-a0af-7003f6f692bc","documentRevision":"rev_667aa892-c71a-4419-9f8c-7aed901fbadb","active":true,"crashed":false,"openedBy":"agent","navigationWait":{"status":"failed","stage":"navigation-started","elapsedMs":21187},"page":{"contentTrust":"untrusted","url":"http://127.0.0.1:3000/login","title":"127.0.0.1:3000/login"}}]
+ERROR NAVIGATION_INTERRUPTED
+The connection was interrupted. Retry navigation before retrying page actions; do not automatically resubmit form data.
+{"control":{"documentRevision":"rev_667aa892-c71a-4419-9f8c-7aed901fbadb","error":{"code":"NAVIGATION_INTERRUPTED","retryable":true},"requiresSnapshot":false,"status":"error","tabId":"tab_7566f96f-6369-4b6e-a0af-7003f6f692bc"},"kind":"error","page":{"contentTrust":"untrusted","url":"http://127.0.0.1:3000/login"},"schema":"manus.browser/v1","warnings":["ERR_CONNECTION_TIMED_OUT (-118)"]}
+Post-cell observation unavailable. Execution status is unchanged; effects may be partial or uncertain. Observe before continuing; do not replay completed or uncertain actions.

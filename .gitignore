@@ -1,0 +1,9 @@
+node_modules/
+.next/
+src/generated/prisma/
+out/
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store

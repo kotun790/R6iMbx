@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  PLAYER
+  ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  BANNED
+}
+
+enum TransactionType {
+  DEPOSIT
+  WITHDRAW
+  BET
+  WIN
+  ADJUSTMENT
+}
+
+enum TransactionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  COMPLETED
+}
+
+model User {
+  id           String        @id @default(cuid())
+  username     String        @unique @db.VarChar(24)
+  passwordHash String
+  role         UserRole      @default(PLAYER)
+  status       UserStatus    @default(ACTIVE)
+  displayName  String?       @db.VarChar(100)
+  contact      String?       @db.VarChar(100)
+  lastLoginAt  DateTime?
+  sessionVersion Int         @default(0)
+  wallet       Wallet?
+  transactions Transaction[]
+  operatedTransactions Transaction[] @relation("TransactionOperator")
+  gameConfigAudits GameConfigAudit[] @relation("GameConfigAuditActor")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Decimal  @default(0.00) @db.Decimal(18, 2)
+  currency  String   @default("THB") @db.VarChar(3)
+  updatedAt DateTime @updatedAt
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  userId        String
+  user          User              @relation(fields: [userId], references: [id], onDelete: Restrict)
+  operatorId    String?
+  operator      User?             @relation("TransactionOperator", fields: [operatorId], references: [id], onDelete: SetNull)
+  type          TransactionType
+  amount        Decimal           @db.Decimal(18, 2)
+  balanceBefore Decimal           @db.Decimal(18, 2)
+  balanceAfter  Decimal           @db.Decimal(18, 2)
+  status        TransactionStatus @default(PENDING)
+  referenceId   String?           @unique
+  note          String?           @db.Text
+  createdAt     DateTime          @default(now())
+
+  @@index([userId, createdAt])
+  @@index([type, status, createdAt])
+  @@index([operatorId, createdAt])
+}
+
+model SystemSettings {
+  id                       Int      @id @default(1)
+  selfServiceDepositEnabled Boolean @default(true) @map("enableSelfDeposit")
+  selfServiceWithdrawEnabled Boolean @default(true) @map("enableSelfWithdraw")
+  maintenanceMode           Boolean  @default(false)
+  agentContactLink          String   @default("https://t.me/your_support") @map("fallbackContactUrl")
+  updatedAt                 DateTime @updatedAt
+}
+
+model GameConfig {
+  id          String   @id @default(cuid())
+  gameKey     String   @unique @db.VarChar(80)
+  name        String   @db.VarChar(120)
+  rtpPercent  Decimal  @default(96.50) @db.Decimal(5, 2)
+  isEnabled   Boolean  @default(true)
+  minBet      Decimal  @default(1.00) @db.Decimal(18, 2)
+  maxBet      Decimal  @default(1000.00) @db.Decimal(18, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isEnabled, gameKey])
+}
+
+model GameConfigAudit {
+  id          String   @id @default(cuid())
+  gameKey     String   @db.VarChar(80)
+  configField String   @db.VarChar(50)
+  oldValue    String?  @db.VarChar(100)
+  newValue    String   @db.VarChar(100)
+  actorId     String
+  actor       User     @relation("GameConfigAuditActor", fields: [actorId], references: [id], onDelete: Restrict)
+  createdAt   DateTime @default(now())
+
+  @@index([gameKey, createdAt])
+  @@index([actorId, createdAt])
+}
